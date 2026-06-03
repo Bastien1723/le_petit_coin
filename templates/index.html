@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PIZZA SITE</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange: #F4721E; --orange-light: #FF9145; --orange-pale: #FFF0E6;
+    --dark: #1A1A2E; --dark-mid: #2D2D44; --gray: #6B7280;
+    --gray-light: #F3F4F6; --white: #FFFFFF;
+    --green: #10B981; --red: #EF4444; --blue: #3B82F6;
+    --border: #E5E7EB;
+    --shadow: 0 4px 24px rgba(0,0,0,0.08);
+    --shadow-hover: 0 8px 32px rgba(244,114,30,0.18);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: #F7F8FA; color: var(--dark); min-height: 100vh; }
+
+  /* HEADER */
+  header {
+    background: var(--dark); padding: 0 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px; position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  }
+  .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 22px; color: white; display: flex; align-items: center; gap: 10px; cursor: pointer; }
+  .logo span { background: var(--orange); color: white; border-radius: 8px; padding: 2px 8px; font-size: 14px; }
+  nav { display: flex; gap: 8px; }
+  nav button {
+    background: transparent; color: rgba(255,255,255,0.7);
+    border: 1px solid rgba(255,255,255,0.15);
+    padding: 7px 16px; border-radius: 8px;
+    font-family: 'DM Sans', sans-serif; font-size: 14px; cursor: pointer; transition: all 0.2s;
+  }
+  nav button:hover, nav button.active { background: var(--orange); color: white; border-color: var(--orange); }
+  .header-search { flex: 1; max-width: 360px; margin: 0 24px; position: relative; }
+  .header-search input {
+    width: 100%; padding: 9px 16px 9px 40px;
+    border: none; border-radius: 10px;
+    background: rgba(255,255,255,0.1); color: white;
+    font-family: 'DM Sans', sans-serif; font-size: 14px; outline: none;
+  }
+  .header-search input::placeholder { color: rgba(255,255,255,0.4); }
+  .header-search svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.4); }
+
+  /* LAYOUT */
+  .app { display: flex; min-height: calc(100vh - 64px); }
+
+  /* SIDEBAR */
+  aside {
+    width: 240px; min-width: 240px;
+    background: white; border-right: 1px solid var(--border);
+    padding: 24px 0; position: sticky; top: 64px;
+    height: calc(100vh - 64px); overflow-y: auto;
+  }
+  .sidebar-section { padding: 0 20px 24px; }
+  .sidebar-label { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; color: var(--gray); margin-bottom: 10px; }
+  .cat-btn { display: flex; align-items: center; gap: 10px; width: 100%; padding: 8px 12px; border: none; background: transparent; border-radius: 8px; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 13.5px; color: var(--dark); text-align: left; transition: all 0.15s; }
+  .cat-btn:hover, .cat-btn.active { background: var(--orange-pale); color: var(--orange); }
+  .cat-btn.active { font-weight: 500; }
+  .cat-icon { font-size: 16px; width: 20px; text-align: center; }
+  .cat-count { margin-left: auto; background: var(--gray-light); color: var(--gray); font-size: 11px; padding: 1px 6px; border-radius: 20px; font-weight: 500; }
+  .cat-btn.active .cat-count { background: var(--orange); color: white; }
+  hr.divider { border: none; border-top: 1px solid var(--border); margin: 4px 20px 20px; }
+  .filter-group { margin-bottom: 16px; }
+  .filter-label { font-size: 12px; font-weight: 500; color: var(--gray); margin-bottom: 6px; }
+  .price-range { display: flex; gap: 8px; align-items: center; }
+  .price-range input { width: 80px; padding: 6px 10px; border: 1px solid var(--border); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 13px; outline: none; }
+  .price-range input:focus { border-color: var(--orange); }
+  .filter-btn { width: 100%; padding: 9px; background: var(--orange); color: white; border: none; border-radius: 8px; font-family: 'Syne', sans-serif; font-weight: 600; font-size: 13px; cursor: pointer; }
+  .filter-btn:hover { background: var(--orange-light); }
+
+  /* MAIN */
+  main { flex: 1; padding: 28px 32px; max-width: 1100px; }
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* TOOLBAR */
+  .toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
+  .toolbar h1 { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 800; }
+  .toolbar h1 small { font-size: 14px; font-weight: 400; color: var(--gray); margin-left: 8px; }
+  .toolbar-actions { display: flex; gap: 8px; align-items: center; }
+  .btn { padding: 9px 18px; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 14px; cursor: pointer; border: none; transition: all 0.2s; font-weight: 500; }
+  .btn-primary { background: var(--orange); color: white; }
+  .btn-primary:hover { background: var(--orange-light); transform: translateY(-1px); }
+  .btn-outline { background: white; color: var(--dark); border: 1px solid var(--border); }
+  .btn-outline:hover { border-color: var(--orange); color: var(--orange); }
+  .btn-sm { padding: 6px 12px; font-size: 13px; }
+  .btn-green { background: var(--green); color: white; }
+
+  /* SORT */
+  .sort-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+  .sort-bar span { font-size: 13px; color: var(--gray); }
+  .sort-chip { padding: 5px 14px; border-radius: 20px; border: 1px solid var(--border); background: white; font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; transition: all 0.15s; }
+  .sort-chip:hover { border-color: var(--orange); color: var(--orange); }
+  .sort-chip.active { background: var(--orange); color: white; border-color: var(--orange); }
+
+  /* STATS */
+  .stats-banner { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+  .stat-card { background: white; border-radius: 12px; padding: 16px 18px; border: 1px solid var(--border); }
+  .stat-card .s-label { font-size: 12px; color: var(--gray); margin-bottom: 4px; }
+  .stat-card .s-value { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; }
+  .stat-card.orange { background: var(--orange); color: white; border-color: var(--orange); }
+  .stat-card.orange .s-label { color: rgba(255,255,255,0.7); }
+  .stat-card.orange .s-value { color: white; }
+
+  /* CARDS */
+  .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px; }
+  .card { background: white; border-radius: 14px; border: 1px solid var(--border); overflow: hidden; transition: all 0.25s; position: relative; cursor: pointer; }
+  .card:hover { box-shadow: var(--shadow-hover); transform: translateY(-3px); border-color: transparent; }
+  .card-img { height: 160px; background: var(--gray-light); display: flex; align-items: center; justify-content: center; font-size: 56px; position: relative; }
+  .card-badge { position: absolute; top: 10px; left: 10px; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
+  .badge-bon-plan { background: #FEF3C7; color: #D97706; }
+  .badge-rare { background: #EDE9FE; color: #7C3AED; }
+  .fav-btn { position: absolute; top: 10px; right: 10px; width: 32px; height: 32px; border-radius: 50%; background: white; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; transition: all 0.2s; }
+  .fav-btn:hover { transform: scale(1.15); }
+  .fav-btn.active { background: #FEE2E2; border-color: var(--red); }
+  .card-body { padding: 14px 16px; }
+  .card-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .card-cat { font-size: 12px; color: var(--gray); margin-bottom: 10px; }
+  .card-price { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 20px; color: var(--orange); }
+  .card-price-min { font-size: 12px; color: var(--gray); margin-top: 2px; }
+  .score-bar { height: 3px; background: var(--gray-light); border-radius: 2px; margin: 8px 0 4px; overflow: hidden; }
+  .score-bar-fill { height: 100%; background: linear-gradient(90deg, var(--orange), var(--orange-light)); border-radius: 2px; }
+  .card-score { font-size: 11px; color: var(--orange); font-weight: 600; }
+  .card-footer { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; border-top: 1px solid var(--gray-light); background: var(--gray-light); }
+  .card-etat { font-size: 12px; padding: 3px 8px; border-radius: 6px; background: white; border: 1px solid var(--border); }
+  .card-vendeur { font-size: 12px; color: var(--gray); }
+
+  /* EMPTY */
+  .empty { text-align: center; padding: 60px 20px; color: var(--gray); }
+  .empty .empty-icon { font-size: 56px; margin-bottom: 16px; }
+  .empty h3 { font-family: 'Syne', sans-serif; font-size: 18px; color: var(--dark); margin-bottom: 8px; }
+
+  /* MODAL */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: white; border-radius: 16px; padding: 32px; width: 100%; max-width: 480px; box-shadow: 0 24px 80px rgba(0,0,0,0.2); animation: modalIn 0.25s ease; }
+  @keyframes modalIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+  .modal h2 { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 20px; }
+  .form-group { margin-bottom: 16px; }
+  .form-label { font-size: 13px; font-weight: 500; color: var(--gray); margin-bottom: 6px; display: block; }
+  .form-control { width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 14px; outline: none; transition: border 0.2s; background: white; }
+  .form-control:focus { border-color: var(--orange); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .modal-actions { display: flex; gap: 10px; margin-top: 24px; justify-content: flex-end; }
+
+  /* DETAIL */
+  .detail-header { display: flex; gap: 20px; margin-bottom: 20px; }
+  .detail-img { width: 100px; height: 100px; flex-shrink: 0; background: var(--gray-light); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 48px; }
+  .detail-info h2 { font-family: 'Syne', sans-serif; font-size: 20px; margin-bottom: 4px; }
+  .detail-price { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; color: var(--orange); }
+  .detail-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+  .detail-meta-item { background: var(--gray-light); padding: 10px 12px; border-radius: 10px; }
+  .detail-meta-item .label { font-size: 11px; color: var(--gray); margin-bottom: 2px; }
+  .detail-meta-item .value { font-size: 14px; font-weight: 500; }
+  .opportunity-block { background: var(--orange-pale); border-radius: 10px; padding: 14px; margin-bottom: 16px; border-left: 3px solid var(--orange); }
+  .opportunity-block .label { font-size: 11px; color: var(--orange); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; }
+  .opportunity-block .value { font-size: 24px; font-weight: 800; font-family: 'Syne', sans-serif; }
+
+  /* USERS */
+  .users-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+  .user-card { background: white; border-radius: 14px; border: 1px solid var(--border); padding: 20px; }
+  .user-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .user-avatar { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 800; font-family: 'Syne', sans-serif; }
+  .avatar-acheteur { background: #DBEAFE; color: #2563EB; }
+  .avatar-vendeur { background: #D1FAE5; color: #059669; }
+  .user-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 16px; }
+  .user-type { font-size: 12px; color: var(--gray); }
+  .user-stat { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--gray-light); font-size: 13px; }
+  .user-stat:last-child { border-bottom: none; }
+  .user-stat .stat-label { color: var(--gray); }
+  .user-stat .stat-value { font-weight: 600; }
+  .stat-value.green { color: var(--green); }
+  .stat-value.orange { color: var(--orange); }
+
+  /* BONS PLANS */
+  .bon-plan-card { background: white; border-radius: 14px; border: 1px solid var(--border); padding: 18px 20px; display: flex; align-items: center; gap: 16px; transition: all 0.2s; margin-bottom: 12px; cursor: pointer; }
+  .bon-plan-card:hover { box-shadow: var(--shadow-hover); transform: translateX(4px); }
+  .bon-plan-icon { width: 60px; height: 60px; border-radius: 12px; background: var(--orange-pale); display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0; }
+  .bon-plan-info { flex: 1; }
+  .bon-plan-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 16px; margin-bottom: 4px; }
+  .bon-plan-cat { font-size: 12px; color: var(--gray); margin-bottom: 6px; }
+  .bon-plan-prices { display: flex; align-items: baseline; gap: 10px; }
+  .bp-price { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; color: var(--orange); }
+  .bp-min { font-size: 13px; color: var(--gray); text-decoration: line-through; }
+  .bon-plan-reduction { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 22px; color: var(--green); text-align: right; }
+  .bon-plan-reduction small { display: block; font-size: 11px; color: var(--gray); font-family: 'DM Sans', sans-serif; font-weight: 400; }
+
+  /* ASSISTANT */
+  .assistant-card { background: linear-gradient(135deg, var(--dark) 0%, var(--dark-mid) 100%); border-radius: 16px; padding: 28px; color: white; margin-bottom: 20px; }
+  .assistant-card h2 { font-family: 'Syne', sans-serif; font-size: 18px; margin-bottom: 8px; }
+  .assistant-card p { font-size: 14px; opacity: 0.7; margin-bottom: 20px; }
+  .assistant-form { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; }
+  .assistant-form .form-group { flex: 1; min-width: 160px; margin: 0; }
+  .assistant-form .form-label { color: rgba(255,255,255,0.6); }
+  .assistant-form .form-control { background: rgba(255,255,255,0.1); color: white; border-color: rgba(255,255,255,0.2); }
+  .assistant-form .form-control:focus { border-color: var(--orange); }
+  .result-card { background: white; border-radius: 14px; border: 2px solid var(--orange); padding: 20px; margin-bottom: 16px; animation: fadeIn 0.3s; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .result-card h3 { font-family: 'Syne', sans-serif; font-size: 15px; color: var(--orange); margin-bottom: 12px; }
+  .result-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+
+  /* TRANSACTIONS */
+  .tx-row { background: white; border-radius: 10px; border: 1px solid var(--border); padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; font-size: 14px; }
+  .tx-bien { font-weight: 600; }
+  .tx-prix { font-family: 'Syne', sans-serif; font-weight: 800; color: var(--orange); }
+  .tx-meta { font-size: 12px; color: var(--gray); }
+
+  /* ACHAT MODAL */
+  .achat-info { background: var(--orange-pale); border-radius: 10px; padding: 14px 16px; margin-bottom: 16px; }
+  .achat-row { display: flex; justify-content: space-between; font-size: 14px; padding: 4px 0; }
+  .achat-row.total { font-weight: 700; font-family: 'Syne', sans-serif; font-size: 16px; margin-top: 6px; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 10px; }
+
+  /* TOAST */
+  #toast { position: fixed; bottom: 24px; right: 24px; background: var(--dark); color: white; padding: 12px 20px; border-radius: 10px; font-size: 14px; font-weight: 500; box-shadow: 0 8px 24px rgba(0,0,0,0.2); transform: translateY(80px); opacity: 0; transition: all 0.3s; z-index: 9999; }
+  #toast.show { transform: translateY(0); opacity: 1; }
+  #toast.success { background: var(--green); }
+  #toast.error { background: var(--red); }
+  #toast.info { background: var(--blue); }
+
+  /* LOADING */
+  .spinner { display: inline-block; width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo" onclick="showPage('catalogue')">🛍️ <span>LE PETIT</span> COIN</div>
+  <div class="header-search">
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+    <input id="globalSearch" type="text" placeholder="Rechercher un article…" oninput="searchHandler()">
+  </div>
+  <nav>
+    <button onclick="showPage('catalogue')" id="nav-catalogue" class="active">🛒 Catalogue</button>
+    <button onclick="showPage('bons-plans')" id="nav-bons-plans">🔥 Bons Plans</button>
+    <button onclick="showPage('assistant')" id="nav-assistant">🤖 Assistant</button>
+    <button onclick="showPage('utilisateurs')" id="nav-utilisateurs">👥 Utilisateurs</button>
+    <button onclick="showPage('transactions')" id="nav-transactions">📋 Transactions</button>
+  </nav>
+</header>
+
+<div class="app">
+  <aside>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Catégories</div>
+      <button class="cat-btn active" onclick="filterCat(null,this)"><span class="cat-icon">🏠</span> Toutes <span class="cat-count" id="cnt-all">—</span></button>
+      <button class="cat-btn" onclick="filterCat('Véhicules',this)"><span class="cat-icon">🚗</span> Véhicules <span class="cat-count">—</span></button>
+      <button class="cat-btn" onclick="filterCat('Électronique',this)"><span class="cat-icon">📱</span> Électronique <span class="cat-count">—</span></button>
+      <button class="cat-btn" onclick="filterCat('Immobilier',this)"><span class="cat-icon">🏡</span> Immobilier <span class="cat-count">—</span></button>
+      <button class="cat-btn" onclick="filterCat('Maison & Jardin',this)"><span class="cat-icon">🌿</span> Maison & Jardin <span class="cat-count">—</span></button>
+      <button class="cat-btn" onclick="filterCat('Mode',this)"><span class="cat-icon">👗</span> Mode <span class="cat-count">—</span></button>
+      <button class="cat-btn" onclick="filterCat('Loisirs',this)"><span class="cat-icon">🎭</span> Loisirs <span class="cat-count">—</span></button>
+      <button class="cat-btn" onclick="filterCat('Sport',this)"><span class="cat-icon">⚽</span> Sport <span class="cat-count">—</span></button>
+      <button class="cat-btn" onclick="filterCat('Famille',this)"><span class="cat-icon">👶</span> Famille <span class="cat-count">—</span></button>
+    </div>
+    <hr class="divider">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Filtrer par prix</div>
+      <div class="filter-group">
+        <div class="price-range">
+          <input type="number" id="priceMin" placeholder="Min €" min="0">
+          <span style="color:var(--gray)">–</span>
+          <input type="number" id="priceMax" placeholder="Max €" min="0">
+        </div>
+      </div>
+      <div class="filter-group">
+        <div class="filter-label">État</div>
+        <select class="form-control" id="filterEtat">
+          <option value="">Tous les états</option>
+          <option>Neuf</option><option>Très bon état</option>
+          <option>Bon état</option><option>Occasion</option><option>À réparer</option>
+        </select>
+      </div>
+      <button class="filter-btn" onclick="applyFilters()">Appliquer</button>
+    </div>
+    <hr class="divider">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Mes favoris ❤️</div>
+      <div id="sidebarFavs" style="font-size:13px;color:var(--gray)">Chargement…</div>
+    </div>
+  </aside>
+
+  <main>
+
+    <!-- CATALOGUE -->
+    <div class="page active" id="page-catalogue">
+      <div class="stats-banner" id="statsBanner">
+        <div class="stat-card orange"><div class="s-label">Articles</div><div class="s-value" id="s-count">—</div></div>
+        <div class="stat-card"><div class="s-label">Valeur totale</div><div class="s-value" id="s-total">—</div></div>
+        <div class="stat-card"><div class="s-label">Prix moyen</div><div class="s-value" id="s-avg">—</div></div>
+        <div class="stat-card"><div class="s-label">🔥 Bons plans</div><div class="s-value" id="s-bp">—</div></div>
+      </div>
+      <div class="toolbar">
+        <h1>Annonces <small id="countLabel"></small></h1>
+        <div class="toolbar-actions">
+          <button class="btn btn-outline" onclick="openModal('modalBien')">➕ Déposer une annonce</button>
+        </div>
+      </div>
+      <div class="sort-bar">
+        <span>Trier par :</span>
+        <button class="sort-chip active" onclick="setSort(this,'prix')">Prix ↑</button>
+        <button class="sort-chip" onclick="setSort(this,'opportunite')">🔥 Opportunité</button>
+        <button class="sort-chip" onclick="setSort(this,'rarete')">💎 Rareté</button>
+        <button class="sort-chip" onclick="setSort(this,'nom')">A–Z</button>
+      </div>
+      <div class="cards-grid" id="catalogGrid"><div class="empty"><div class="empty-icon">⏳</div><h3>Chargement…</h3></div></div>
+    </div>
+
+    <!-- BONS PLANS -->
+    <div class="page" id="page-bons-plans">
+      <div class="toolbar">
+        <h1>🔥 Bons Plans</h1>
+        <div class="toolbar-actions">
+          <label style="font-size:13px;color:var(--gray);margin-right:6px">Réduction min.</label>
+          <select class="form-control" style="width:auto" id="seuilSelect" onchange="loadBonsPlans()">
+            <option value="10">10%</option><option value="15">15%</option>
+            <option value="20" selected>20%</option><option value="30">30%</option><option value="40">40%</option>
+          </select>
+        </div>
+      </div>
+      <div id="bonsPlansContainer"></div>
+    </div>
+
+    <!-- ASSISTANT -->
+    <div class="page" id="page-assistant">
+      <div class="assistant-card">
+        <h2>🤖 Assistant d'achat intelligent</h2>
+        <p>L'assistant analyse le catalogue avec tes algorithmes Python pour trouver les meilleures opportunités.</p>
+        <div class="assistant-form">
+          <div class="form-group">
+            <label class="form-label">Acheteur</label>
+            <select class="form-control" id="assistantAcheteur"></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Budget max (€)</label>
+            <input class="form-control" id="assistantBudget" type="number" placeholder="500">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Max articles</label>
+            <input class="form-control" id="assistantMax" type="number" value="5" min="1">
+          </div>
+          <button class="btn btn-primary" onclick="runAssistant()">Analyser →</button>
+        </div>
+      </div>
+      <div id="assistantResults"></div>
+    </div>
+
+    <!-- UTILISATEURS -->
+    <div class="page" id="page-utilisateurs">
+      <div class="toolbar">
+        <h1>Utilisateurs</h1>
+        <div class="toolbar-actions">
+          <button class="btn btn-outline btn-sm" onclick="openModal('modalUser')">➕ Nouvel utilisateur</button>
+        </div>
+      </div>
+      <div class="users-grid" id="usersGrid"></div>
+    </div>
+
+    <!-- TRANSACTIONS -->
+    <div class="page" id="page-transactions">
+      <div class="toolbar"><h1>📋 Historique des transactions</h1></div>
+      <div id="txContainer"></div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ── MODALS ── -->
+
+<div class="modal-overlay" id="modalUser">
+  <div class="modal">
+    <h2>👤 Créer un utilisateur</h2>
+    <div class="form-group"><label class="form-label">Nom</label><input class="form-control" id="uNom" placeholder="Ex: Alice"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Budget (€)</label><input class="form-control" id="uBudget" type="number" placeholder="500"></div>
+      <div class="form-group"><label class="form-label">Type</label>
+        <select class="form-control" id="uType"><option value="Acheteur">Acheteur</option><option value="Vendeur">Vendeur</option></select>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('modalUser')">Annuler</button>
+      <button class="btn btn-primary" onclick="creerUtilisateur()">Créer</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalBien">
+  <div class="modal">
+    <h2>🏷️ Déposer une annonce</h2>
+    <div class="form-group"><label class="form-label">Titre</label><input class="form-control" id="bNom" placeholder="Ex: iPhone 14 Pro"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Catégorie</label>
+        <select class="form-control" id="bCategorie">
+          <option>Véhicules</option><option>Électronique</option><option>Immobilier</option>
+          <option>Maison & Jardin</option><option>Mode</option><option>Loisirs</option>
+          <option>Sport</option><option>Famille</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">État</label>
+        <select class="form-control" id="bEtat">
+          <option>Neuf</option><option>Très bon état</option><option>Bon état</option>
+          <option>Occasion</option><option>À réparer</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Prix demandé (€)</label><input class="form-control" id="bPrix" type="number"></div>
+      <div class="form-group"><label class="form-label">Prix minimum (€)</label><input class="form-control" id="bPrixMin" type="number"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Vendeur</label><select class="form-control" id="bVendeur"></select></div>
+    <div class="form-group"><label class="form-label">Description (optionnel)</label><input class="form-control" id="bDesc" placeholder="Détails…"></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('modalBien')">Annuler</button>
+      <button class="btn btn-primary" onclick="creerBien()">Publier</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalDetail">
+  <div class="modal" style="max-width:520px">
+    <div id="detailContent"></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('modalDetail')">Fermer</button>
+      <button class="btn btn-primary" id="detailAchatBtn">🛒 Acheter</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalAchat">
+  <div class="modal" style="max-width:420px">
+    <h2>🛒 Confirmer l'achat</h2>
+    <div id="achatContent"></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('modalAchat')">Annuler</button>
+      <button class="btn btn-green" onclick="confirmerAchat()">✓ Confirmer</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── CONFIG ────────────────────────────────────────────────────────────────────
+const API = "";  // Même domaine que Flask, pas besoin de préfixe
+
+const CAT_ICONS = {
+  "Véhicules":"🚗","Voitures":"🚗","Motos":"🏍️","Vélos":"🚲",
+  "Immobilier":"🏡","Appartement":"🏢","Maison":"🏠",
+  "Électronique":"📱","Téléphones":"📱","Ordinateurs":"💻","Consoles":"🎮",
+  "Maison & Jardin":"🌿","Électroménager":"🫧",
+  "Mode":"👗","Montres & Bijoux":"⌚",
+  "Loisirs":"🎭","Collection":"🏺","Instruments de musique":"🎸",
+  "Sport":"⚽","Famille":"👶",
+};
+const ETAT_COLORS = {
+  "Neuf":"#D1FAE5","Très bon état":"#DBEAFE",
+  "Bon état":"#FEF3C7","Occasion":"#FEE2E2","À réparer":"#F3F4F6"
+};
+
+function icon(cat) { return CAT_ICONS[cat] || "📦"; }
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let currentSort = "prix";
+let currentCat = null;
+let currentFilters = { priceMin: 0, priceMax: 1e9, etat: "" };
+let allBiens = [];
+let allUsers = [];
+let pendingAchatId = null;
+let firstAcheteurId = null;
+
+// ── API CALLS ─────────────────────────────────────────────────────────────────
+async function api(path, opts = {}) {
+  try {
+    const res = await fetch(API + path, {
+      headers: { "Content-Type": "application/json" },
+      ...opts
+    });
+    return await res.json();
+  } catch (e) {
+    toast("Erreur serveur : " + e.message, "error");
+    return null;
+  }
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+async function init() {
+  await loadUsers();
+  await loadCatalogue();
+  await loadSidebarFavs();
+}
+
+// ── CATALOGUE ─────────────────────────────────────────────────────────────────
+async function loadCatalogue() {
+  const params = new URLSearchParams({
+    tri: currentSort,
+    prix_min: currentFilters.priceMin,
+    prix_max: currentFilters.priceMax,
+  });
+  if (currentCat) params.set("categorie", currentCat);
+  if (currentFilters.etat) params.set("etat", currentFilters.etat);
+  const q = document.getElementById("globalSearch").value.trim();
+  if (q) params.set("q", q);
+
+  const data = await api(`/api/catalogue?${params}`);
+  if (!data) return;
+
+  allBiens = data.biens;
+  renderCatalogue(data);
+}
+
+function renderCatalogue(data) {
+  const { biens, total, count } = data;
+  document.getElementById("countLabel").textContent = `${count} article${count > 1 ? "s" : ""}`;
+  document.getElementById("s-count").textContent = count;
+  document.getElementById("s-total").textContent = total.toLocaleString("fr-FR") + " €";
+  document.getElementById("s-avg").textContent = count ? Math.round(total / count).toLocaleString("fr-FR") + " €" : "—";
+  document.getElementById("s-bp").textContent = biens.filter(b => b.pctNeg >= 20).length;
+
+  const grid = document.getElementById("catalogGrid");
+  if (!biens.length) {
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="empty-icon">🔍</div><h3>Aucun article</h3><p>Essayez d'autres filtres</p></div>`;
+  } else {
+    const maxScore = Math.max(...biens.map(b => b.score), 1);
+    grid.innerHTML = biens.map(b => cardHTML(b, maxScore)).join("");
+  }
+
+  // Comptes sidebar
+  document.getElementById("cnt-all").textContent = count;
+}
+
+function cardHTML(b, maxScore) {
+  const isFav = allUsers.find(u => u.type === "Acheteur" && u.favoris.includes(b.id));
+  const isBP = b.pctNeg >= 20;
+  const isRare = b.categorie_coef >= 1.4;
+  const pct = Math.min(100, (b.score / maxScore) * 100);
+
+  return `<div class="card" onclick="openDetail(${b.id})">
+    <div class="card-img">${icon(b.categorie)}
+      ${isBP ? '<span class="card-badge badge-bon-plan">Bon plan</span>' : ''}
+      ${isRare && !isBP ? '<span class="card-badge badge-rare">💎 Rare</span>' : ''}
+      <button class="fav-btn ${isFav ? 'active' : ''}" onclick="toggleFav(event,${b.id})">${isFav ? '❤️' : '🤍'}</button>
+    </div>
+    <div class="card-body">
+      <div class="card-title">${b.nom}</div>
+      <div class="card-cat">${b.categorie}</div>
+      <div class="card-price">${b.prix.toLocaleString("fr-FR")} €</div>
+      <div class="card-price-min">Négo dès ${b.prixMin.toLocaleString("fr-FR")} € (−${b.pctNeg}%)</div>
+      <div class="score-bar"><div class="score-bar-fill" style="width:${pct}%"></div></div>
+      <div class="card-score">Score opportunité : ${b.score}</div>
+    </div>
+    <div class="card-footer">
+      <span class="card-etat" style="background:${ETAT_COLORS[b.etat]||'#eee'}">${b.etat}</span>
+      <span class="card-vendeur">📍 ${b.vendeur || "Inconnu"}</span>
+    </div>
+  </div>`;
+}
+
+// ── DETAIL ────────────────────────────────────────────────────────────────────
+async function openDetail(id) {
+  const data = await api(`/api/catalogue/${id}`);
+  if (!data || data.error) { toast("Bien introuvable", "error"); return; }
+  const b = data;
+
+  document.getElementById("detailContent").innerHTML = `
+    <div class="detail-header">
+      <div class="detail-img">${icon(b.categorie)}</div>
+      <div class="detail-info">
+        <h2>${b.nom}</h2>
+        <div class="detail-price">${b.prix.toLocaleString("fr-FR")} €</div>
+        <div style="font-size:13px;color:var(--gray)">Min négociable : <strong>${b.prixMin.toLocaleString("fr-FR")} €</strong></div>
+      </div>
+    </div>
+    <div class="detail-meta">
+      <div class="detail-meta-item"><div class="label">Catégorie</div><div class="value">${icon(b.categorie)} ${b.categorie}</div></div>
+      <div class="detail-meta-item"><div class="label">État</div><div class="value">${b.etat}</div></div>
+      <div class="detail-meta-item"><div class="label">Vendeur</div><div class="value">👤 ${b.vendeur || "—"}</div></div>
+      <div class="detail-meta-item"><div class="label">Marge négo.</div><div class="value">−${b.pctNeg}% (${b.marge} €)</div></div>
+    </div>
+    <div class="opportunity-block">
+      <div class="label">⚡ Score d'opportunité</div>
+      <div class="value">${b.score} <small style="font-size:13px;font-weight:400;color:var(--gray);font-family:'DM Sans'">× coef. rareté ${b.categorie_coef}</small></div>
+    </div>
+    ${b.description ? `<p style="font-size:14px;color:var(--gray)">${b.description}</p>` : ''}
+  `;
+
+  const btn = document.getElementById("detailAchatBtn");
+  if (b.estVendu) {
+    btn.textContent = "🔴 Déjà vendu"; btn.disabled = true; btn.style.opacity = "0.5";
+  } else {
+    btn.textContent = "🛒 Acheter"; btn.disabled = false; btn.style.opacity = "1";
+    btn.onclick = () => openAchat(b.id);
+  }
+  openModal("modalDetail");
+}
+
+// ── ACHAT ─────────────────────────────────────────────────────────────────────
+function openAchat(bienId) {
+  closeModal("modalDetail");
+  const b = allBiens.find(x => x.id === bienId);
+  const acheteurs = allUsers.filter(u => u.type === "Acheteur");
+  if (!acheteurs.length) { toast("Créez d'abord un acheteur", "error"); return; }
+
+  const opts = acheteurs.map(a => `<option value="${a.id}">${a.nom} — budget : ${a.budget.toLocaleString("fr-FR")} €</option>`).join("");
+  document.getElementById("achatContent").innerHTML = `
+    <div class="achat-info">
+      <div class="achat-row"><span>Article</span><strong>${b.nom}</strong></div>
+      <div class="achat-row"><span>Prix demandé</span><strong>${b.prix.toLocaleString("fr-FR")} €</strong></div>
+      <div class="achat-row"><span>Prix minimum</span><strong>${b.prixMin.toLocaleString("fr-FR")} €</strong></div>
+      <div class="achat-row total"><span>Offre (= min budget/prix)</span><strong style="color:var(--orange)" id="offreCalc">—</strong></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Acheteur</label>
+      <select class="form-control" id="achatAcheteur" onchange="calcOffre(${b.prixMin},${b.prix})">${opts}</select>
+    </div>
+  `;
+  pendingAchatId = bienId;
+  calcOffre(b.prixMin, b.prix);
+  openModal("modalAchat");
+}
+
+function calcOffre(prixMin, prix) {
+  const selId = parseInt(document.getElementById("achatAcheteur")?.value);
+  const a = allUsers.find(u => u.id === selId);
+  if (!a) return;
+  const offre = Math.min(a.budget, prix);
+  const el = document.getElementById("offreCalc");
+  if (el) el.textContent = offre >= prixMin ? offre.toLocaleString("fr-FR") + " €" : "❌ Budget insuffisant";
+}
+
+async function confirmerAchat() {
+  const acheteurId = parseInt(document.getElementById("achatAcheteur").value);
+  const data = await api("/api/acheter", {
+    method: "POST",
+    body: JSON.stringify({ bienId: pendingAchatId, acheteurId })
+  });
+  if (!data) return;
+  closeModal("modalAchat");
+  if (data.succes) {
+    toast(`✅ ${data.message}`, "success");
+    await loadUsers();
+    await loadCatalogue();
+    await loadSidebarFavs();
+  } else {
+    toast("❌ " + data.message, "error");
+  }
+}
+
+// ── BONS PLANS ────────────────────────────────────────────────────────────────
+async function loadBonsPlans() {
+  const seuil = document.getElementById("seuilSelect").value;
+  const data = await api(`/api/bons-plans?seuil=${seuil}`);
+  if (!data) return;
+  const biens = data.biens;
+  const container = document.getElementById("bonsPlansContainer");
+  if (!biens.length) {
+    container.innerHTML = `<div class="empty"><div class="empty-icon">🔍</div><h3>Aucun bon plan</h3><p>Réduisez le seuil</p></div>`;
+    return;
+  }
+  container.innerHTML = biens.map(b => `
+    <div class="bon-plan-card" onclick="openDetail(${b.id})">
+      <div class="bon-plan-icon">${icon(b.categorie)}</div>
+      <div class="bon-plan-info">
+        <div class="bon-plan-name">${b.nom}</div>
+        <div class="bon-plan-cat">${b.categorie} · ${b.etat}</div>
+        <div class="bon-plan-prices">
+          <span class="bp-price">${b.prixMin.toLocaleString("fr-FR")} €</span>
+          <span class="bp-min">${b.prix.toLocaleString("fr-FR")} €</span>
+        </div>
+      </div>
+      <div class="bon-plan-reduction">−${b.pctNeg}%<small>de réduction possible</small></div>
+    </div>
+  `).join("");
+}
+
+// ── ASSISTANT ─────────────────────────────────────────────────────────────────
+async function runAssistant() {
+  const budget = document.getElementById("assistantBudget").value;
+  const max = document.getElementById("assistantMax").value;
+  const [best, panier] = await Promise.all([
+    api(`/api/meilleure-affaire?budget=${budget}`),
+    api(`/api/optimiser-panier?budget=${budget}&max=${max}`)
+  ]);
+
+  const results = document.getElementById("assistantResults");
+  results.innerHTML = "";
+
+  if (best?.bien) {
+    const b = best.bien;
+    results.innerHTML += `<div class="result-card">
+      <h3>⭐ Meilleure affaire (budget ${parseFloat(budget).toLocaleString("fr-FR")} €)</h3>
+      <div style="display:flex;align-items:center;gap:16px">
+        <div style="font-size:48px">${icon(b.categorie)}</div>
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:18px">${b.nom}</div>
+          <div style="color:var(--gray);font-size:13px">${b.categorie} · ${b.etat}</div>
+          <div style="color:var(--orange);font-family:'Syne',sans-serif;font-size:20px;font-weight:800">${b.prix.toLocaleString("fr-FR")} € <span style="font-size:13px;color:var(--gray);font-family:'DM Sans'">→ négo dès ${b.prixMin.toLocaleString("fr-FR")} €</span></div>
+          <div style="color:var(--orange);font-size:13px;font-weight:600">Score : ${b.score}</div>
+        </div>
+      </div>
+    </div>`;
+  } else {
+    results.innerHTML += `<div class="result-card"><h3>⭐ Meilleure affaire</h3><p style="color:var(--gray)">Aucun bien accessible avec ce budget.</p></div>`;
+  }
+
+  if (panier) {
+    results.innerHTML += `<div class="result-card">
+      <h3>🛒 Panier optimisé — coût total : ${panier.cout_total.toLocaleString("fr-FR")} €</h3>
+      ${panier.panier.length === 0
+        ? '<p style="color:var(--gray)">Aucun article dans le budget.</p>'
+        : `<div class="result-grid">${panier.panier.map(b => `
+          <div style="background:var(--gray-light);border-radius:10px;padding:12px;display:flex;align-items:center;gap:10px">
+            <span style="font-size:28px">${icon(b.categorie)}</span>
+            <div><div style="font-weight:600;font-size:14px">${b.nom}</div>
+            <div style="color:var(--orange);font-weight:700">${b.prixMin.toLocaleString("fr-FR")} €</div></div>
+          </div>`).join("")}</div>`}
+    </div>`;
+  }
+}
+
+// ── USERS ─────────────────────────────────────────────────────────────────────
+async function loadUsers() {
+  const data = await api("/api/utilisateurs");
+  if (!data) return;
+  allUsers = data.utilisateurs;
+  firstAcheteurId = allUsers.find(u => u.type === "Acheteur")?.id || null;
+  renderUsers();
+  populateVendeurSelect();
+  populateAssistantSelect();
+}
+
+function renderUsers() {
+  const grid = document.getElementById("usersGrid");
+  if (!allUsers.length) {
+    grid.innerHTML = `<div class="empty"><div class="empty-icon">👥</div><h3>Aucun utilisateur</h3></div>`;
+    return;
+  }
+  grid.innerHTML = allUsers.map(u => {
+    const isV = u.type === "Vendeur";
+    const init = u.nom.slice(0, 2).toUpperCase();
+    return `<div class="user-card">
+      <div class="user-header">
+        <div class="user-avatar ${isV ? 'avatar-vendeur' : 'avatar-acheteur'}">${init}</div>
+        <div><div class="user-name">${u.nom}</div><div class="user-type">${u.type}</div></div>
+      </div>
+      <div class="user-stat"><span class="stat-label">Budget</span><span class="stat-value green">${u.budget.toLocaleString("fr-FR")} €</span></div>
+      ${isV
+        ? `<div class="user-stat"><span class="stat-label">Articles en vente</span><span class="stat-value orange">${(u.biens_en_vente||[]).length}</span></div>`
+        : `<div class="user-stat"><span class="stat-label">Achats</span><span class="stat-value orange">${(u.historique||[]).length}</span></div>
+           <div class="user-stat"><span class="stat-label">Favoris</span><span class="stat-value">❤️ ${(u.favoris||[]).length}</span></div>`}
+    </div>`;
+  }).join("");
+}
+
+function populateVendeurSelect() {
+  const sel = document.getElementById("bVendeur");
+  const vendeurs = allUsers.filter(u => u.type === "Vendeur");
+  sel.innerHTML = vendeurs.length
+    ? vendeurs.map(v => `<option value="${v.id}">${v.nom}</option>`).join("")
+    : `<option value="">— Créez d'abord un vendeur —</option>`;
+}
+
+function populateAssistantSelect() {
+  const sel = document.getElementById("assistantAcheteur");
+  const acheteurs = allUsers.filter(u => u.type === "Acheteur");
+  sel.innerHTML = acheteurs.length
+    ? acheteurs.map(a => `<option value="${a.id}">${a.nom} (${a.budget.toLocaleString("fr-FR")} €)</option>`).join("")
+    : `<option>— Aucun acheteur —</option>`;
+  if (acheteurs[0]) document.getElementById("assistantBudget").value = acheteurs[0].budget;
+  sel.onchange = () => {
+    const a = allUsers.find(u => u.id === parseInt(sel.value));
+    if (a) document.getElementById("assistantBudget").value = a.budget;
+  };
+}
+
+async function creerUtilisateur() {
+  const nom = document.getElementById("uNom").value.trim();
+  const budget = parseFloat(document.getElementById("uBudget").value);
+  const type = document.getElementById("uType").value;
+  if (!nom || isNaN(budget)) { toast("Données invalides", "error"); return; }
+
+  const data = await api("/api/utilisateurs", {
+    method: "POST",
+    body: JSON.stringify({ nom, budget, type })
+  });
+  if (!data) return;
+  if (data.error) { toast("❌ " + data.error, "error"); return; }
+  closeModal("modalUser");
+  toast(`✅ ${type} "${nom}" créé(e)`, "success");
+  document.getElementById("uNom").value = "";
+  document.getElementById("uBudget").value = "";
+  await loadUsers();
+}
+
+async function creerBien() {
+  const nom = document.getElementById("bNom").value.trim();
+  const categorie = document.getElementById("bCategorie").value;
+  const etat = document.getElementById("bEtat").value;
+  const prix = parseFloat(document.getElementById("bPrix").value);
+  const prixMin = parseFloat(document.getElementById("bPrixMin").value);
+  const vendeurId = parseInt(document.getElementById("bVendeur").value);
+  const description = document.getElementById("bDesc").value;
+
+  if (!nom || isNaN(prix) || isNaN(prixMin)) { toast("Remplissez tous les champs", "error"); return; }
+
+  const data = await api("/api/biens", {
+    method: "POST",
+    body: JSON.stringify({ nom, categorie, etat, prix, prixMin, vendeurId, description })
+  });
+  if (!data) return;
+  if (data.error) { toast("❌ " + data.error, "error"); return; }
+  closeModal("modalBien");
+  toast(`✅ "${nom}" mis en vente`, "success");
+  ["bNom","bPrix","bPrixMin","bDesc"].forEach(id => document.getElementById(id).value = "");
+  await loadCatalogue();
+}
+
+// ── FAVORIS ───────────────────────────────────────────────────────────────────
+async function toggleFav(e, bienId) {
+  e.stopPropagation();
+  if (!firstAcheteurId) { toast("Créez d'abord un acheteur", "info"); return; }
+  const data = await api(`/api/favoris/${firstAcheteurId}`, {
+    method: "POST",
+    body: JSON.stringify({ bienId })
+  });
+  if (!data) return;
+  toast(data.action === "ajoute" ? "❤️ Ajouté aux favoris" : "Retiré des favoris", "info");
+  await loadUsers();
+  await loadCatalogue();
+  await loadSidebarFavs();
+}
+
+async function loadSidebarFavs() {
+  const container = document.getElementById("sidebarFavs");
+  const acheteur = allUsers.find(u => u.type === "Acheteur");
+  if (!acheteur || !acheteur.favoris.length) {
+    container.innerHTML = "<span>Aucun favori</span>"; return;
+  }
+  container.innerHTML = acheteur.favoris.map(id => {
+    const b = allBiens.find(x => x.id === id);
+    return b ? `<div style="display:flex;align-items:center;gap:6px;padding:5px 0;cursor:pointer;font-size:13px" onclick="openDetail(${id})">
+      <span>${icon(b.categorie)}</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${b.nom}</span>
+    </div>` : "";
+  }).join("");
+}
+
+// ── TRANSACTIONS ──────────────────────────────────────────────────────────────
+async function loadTransactions() {
+  const data = await api("/api/transactions");
+  if (!data) return;
+  const txs = data.transactions;
+  const container = document.getElementById("txContainer");
+  if (!txs.length) {
+    container.innerHTML = `<div class="empty"><div class="empty-icon">📋</div><h3>Aucune transaction</h3><p>Les achats apparaîtront ici</p></div>`;
+    return;
+  }
+  container.innerHTML = [...txs].reverse().map(t => `
+    <div class="tx-row">
+      <div>
+        <div class="tx-bien">${t.bien}</div>
+        <div class="tx-meta">${t.vendeur} → ${t.acheteur} · ${t.date}</div>
+      </div>
+      <div style="text-align:right">
+        <div class="tx-prix">${t.prix.toLocaleString("fr-FR")} €</div>
+        <div class="tx-meta" style="color:var(--green)">−${t.pctReduction}% (${t.reduction} € économisés)</div>
+      </div>
+    </div>
+  `).join("");
+}
+
+// ── UI ────────────────────────────────────────────────────────────────────────
+function showPage(name) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.getElementById("page-" + name).classList.add("active");
+  document.querySelectorAll("nav button").forEach(b => b.classList.remove("active"));
+  document.getElementById("nav-" + name).classList.add("active");
+  if (name === "bons-plans") loadBonsPlans();
+  if (name === "utilisateurs") renderUsers();
+  if (name === "transactions") loadTransactions();
+  if (name === "assistant") populateAssistantSelect();
+}
+
+function openModal(id) { document.getElementById(id).classList.add("open"); }
+function closeModal(id) { document.getElementById(id).classList.remove("open"); }
+document.querySelectorAll(".modal-overlay").forEach(el => {
+  el.addEventListener("click", e => { if (e.target === el) closeModal(el.id); });
+});
+
+function setSort(el, sort) {
+  document.querySelectorAll(".sort-chip").forEach(c => c.classList.remove("active"));
+  el.classList.add("active");
+  currentSort = sort;
+  loadCatalogue();
+}
+
+function filterCat(cat, el) {
+  document.querySelectorAll(".cat-btn").forEach(b => b.classList.remove("active"));
+  el.classList.add("active");
+  currentCat = cat;
+  loadCatalogue();
+}
+
+function applyFilters() {
+  currentFilters = {
+    priceMin: parseFloat(document.getElementById("priceMin").value) || 0,
+    priceMax: parseFloat(document.getElementById("priceMax").value) || 1e9,
+    etat: document.getElementById("filterEtat").value,
+  };
+  loadCatalogue();
+  showPage("catalogue");
+}
+
+let searchTimeout;
+function searchHandler() {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(loadCatalogue, 300);
+}
+
+function toast(msg, type = "") {
+  const el = document.getElementById("toast");
+  el.textContent = msg;
+  el.className = "show" + (type ? " " + type : "");
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.className = "", 3200);
+}
+
+// ── START ─────────────────────────────────────────────────────────────────────
+init();
+</script>
+</body>
+</html>

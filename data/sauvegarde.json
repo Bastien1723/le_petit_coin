@@ -1,0 +1,34 @@
+{
+    "biens": [
+        {
+            "nom": "iphone 14",
+            "categorie_nom": "Véhicules",
+            "categorie_coef": 1.2,
+            "etat": "Neuf",
+            "prix_souhaite": 500.0,
+            "prix_min": 470.0,
+            "description": "jzjz",
+            "vendeur_nom": "bastien",
+            "est_vendu": false
+        }
+    ],
+    "utilisateurs": [
+        {
+            "nom": "bastien",
+            "budget": 100.0,
+            "type": "Vendeur",
+            "favoris": [],
+            "biens_en_vente": [
+                "iphone 14"
+            ]
+        },
+        {
+            "nom": "milo",
+            "budget": 100.0,
+            "type": "Acheteur",
+            "favoris": [],
+            "historique_achats": []
+        }
+    ],
+    "transactions": []
+}

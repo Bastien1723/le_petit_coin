@@ -1,0 +1,103 @@
+{
+  "categories": [
+    {
+      "nom": "Véhicules",
+      "coefficient_rarete": 1.2,
+      "sous_categories": [
+        {
+          "nom": "Voitures",
+          "coefficient_rarete": 1.0,
+          "sous_categories": [
+            {"nom": "Audi",     "coefficient_rarete": 1.5},
+            {"nom": "BMW",      "coefficient_rarete": 1.5},
+            {"nom": "Mercedes", "coefficient_rarete": 1.6},
+            {"nom": "Peugeot",  "coefficient_rarete": 1.0},
+            {"nom": "Renault",  "coefficient_rarete": 1.0}
+          ]
+        },
+        {
+          "nom": "Motos",
+          "coefficient_rarete": 1.3,
+          "sous_categories": [
+            {"nom": "Honda",    "coefficient_rarete": 1.2},
+            {"nom": "Kawasaki", "coefficient_rarete": 1.3},
+            {"nom": "Suzuki",   "coefficient_rarete": 1.2}
+          ]
+        },
+        {"nom": "Vélos",      "coefficient_rarete": 1.0},
+        {"nom": "Caravaning", "coefficient_rarete": 1.4}
+      ]
+    },
+    {
+      "nom": "Immobilier",
+      "coefficient_rarete": 2.0,
+      "sous_categories": [
+        {"nom": "Appartement", "coefficient_rarete": 1.8},
+        {"nom": "Maison",      "coefficient_rarete": 2.2},
+        {"nom": "Terrain",     "coefficient_rarete": 2.5}
+      ]
+    },
+    {
+      "nom": "Électronique",
+      "coefficient_rarete": 1.1,
+      "sous_categories": [
+        {
+          "nom": "Téléphones",
+          "coefficient_rarete": 1.0,
+          "sous_categories": [
+            {"nom": "Apple",   "coefficient_rarete": 1.3},
+            {"nom": "Samsung", "coefficient_rarete": 1.1},
+            {"nom": "Huawei",  "coefficient_rarete": 1.0}
+          ]
+        },
+        {"nom": "Ordinateurs",   "coefficient_rarete": 1.2},
+        {"nom": "Tablettes",     "coefficient_rarete": 1.1},
+        {"nom": "Consoles",      "coefficient_rarete": 1.4},
+        {"nom": "Photo & Vidéo", "coefficient_rarete": 1.3}
+      ]
+    },
+    {
+      "nom": "Maison & Jardin",
+      "coefficient_rarete": 1.0,
+      "sous_categories": [
+        {"nom": "Ameublement",    "coefficient_rarete": 1.0},
+        {"nom": "Électroménager", "coefficient_rarete": 0.9},
+        {"nom": "Décoration",     "coefficient_rarete": 1.1},
+        {"nom": "Bricolage",      "coefficient_rarete": 0.8},
+        {"nom": "Jardin & Plantes","coefficient_rarete": 1.0}
+      ]
+    },
+    {
+      "nom": "Mode",
+      "coefficient_rarete": 0.9,
+      "sous_categories": [
+        {"nom": "Vêtements Femme",  "coefficient_rarete": 0.8},
+        {"nom": "Vêtements Homme",  "coefficient_rarete": 0.8},
+        {"nom": "Chaussures",       "coefficient_rarete": 0.9},
+        {"nom": "Montres & Bijoux", "coefficient_rarete": 1.5},
+        {"nom": "Accessoires",      "coefficient_rarete": 0.7}
+      ]
+    },
+    {
+      "nom": "Loisirs",
+      "coefficient_rarete": 1.0,
+      "sous_categories": [
+        {"nom": "Sport & Plein air",        "coefficient_rarete": 1.0},
+        {"nom": "Instruments de musique",   "coefficient_rarete": 1.4},
+        {"nom": "Jeux & Jouets",            "coefficient_rarete": 0.9},
+        {"nom": "Livres",                   "coefficient_rarete": 0.7},
+        {"nom": "Collection",               "coefficient_rarete": 2.0},
+        {"nom": "Billetterie",              "coefficient_rarete": 1.1}
+      ]
+    },
+    {
+      "nom": "Famille",
+      "coefficient_rarete": 0.8,
+      "sous_categories": [
+        {"nom": "Équipement bébé",    "coefficient_rarete": 0.7},
+        {"nom": "Vêtements enfant",   "coefficient_rarete": 0.6},
+        {"nom": "Jeux & Jouets enfant","coefficient_rarete": 0.8}
+      ]
+    }
+  ]
+}
